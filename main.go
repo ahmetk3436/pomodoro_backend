@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // App is alias for api.App{}
@@ -23,7 +24,7 @@ func main() {
 
 	// Initialize storage
 	a.initialize(
-		"34.155.128.105",
+		"172.17.0.1",
 		"3306",
 		"root",
 		"r)qDpDcl~$mkcs&Z",
@@ -33,7 +34,7 @@ func main() {
 	a.routes()
 
 	// Start server
-	a.run(":8010")
+	a.run(":8080")
 }
 
 func (a *App) initialize(host, port, username, password, dbname string) {
@@ -42,7 +43,7 @@ func (a *App) initialize(host, port, username, password, dbname string) {
 	connectionString :=
 		fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True", username, password, host, port, dbname)
 
-	a.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+	a.DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 	if err != nil {
 		log.Fatal(err)
 	}
